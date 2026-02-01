@@ -51,8 +51,7 @@ def generate_medical_json_report() -> dict:
     Gọi Groq LLM để tạo báo cáo chẩn đoán phổi dưới dạng JSON.
     Trả về: dict (đã parse JSON)
     """
-  
-
+    
     completion = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
