@@ -1,0 +1,159 @@
+/* RESET */
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", "Noto Sans JP", system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f6f8fb;
+    color: #1f2937;
+}
+
+/* WRAPPER */
+.app-wrapper {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+/* HEADER */
+.app-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.app-header p {
+    margin-top: 8px;
+    color: #6b7280;
+}
+
+/* CARD */
+.app-card {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+/* PANEL */
+.panel {
+    padding: 32px;
+}
+
+.panel h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+/* LEFT PANEL */
+.left-panel {
+    border-right: 1px solid #e5e7eb;
+}
+
+/* UPLOAD */
+.upload-box {
+    display: block;
+    border: 2px dashed #c7d2fe;
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s;
+    background: #f8faff;
+}
+
+.upload-box:hover {
+    background: #eef2ff;
+}
+
+.upload-box input {
+    display: none;
+}
+
+.upload-content span {
+    font-size: 32px;
+}
+
+.preview img {
+    width: 100%;
+    margin-top: 16px;
+    border-radius: 12px;
+    display: none;
+}
+
+/* LAB */
+.lab-section {
+    margin-top: 32px;
+}
+
+.lab-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.lab-item label {
+    font-size: 13px;
+    color: #374151;
+}
+
+.lab-item input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    margin-top: 6px;
+}
+
+/* BUTTONS */
+.btn-primary {
+    margin-top: 28px;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-outline {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid #6366f1;
+    color: #4f46e5;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+/* RESULT */
+.result-box {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f1f5f9;
+    border-radius: 12px;
+}
+
+/* RIGHT PANEL */
+.report-box {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 20px;
+    height: 380px;
+    overflow-y: auto;
+    line-height: 1.7;
+    font-size: 15px;
+    white-space: pre-wrap;
+}

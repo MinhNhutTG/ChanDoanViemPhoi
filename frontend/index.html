@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chẩn Đoán Viêm Phổi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <h1>🩺 AI Chẩn Đoán Viêm Phổi</h1>
+        <p>Phân tích ảnh X-ray kết hợp chỉ số lâm sàng</p>
+    </header>
+
+    <!-- MAIN -->
+    <main class="app-card">
+
+        <!-- LEFT -->
+        <section class="panel left-panel">
+            <h2>📥 Dữ liệu đầu vào</h2>
+
+            <!-- Upload -->
+            <label class="upload-box">
+                <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
+                <div class="upload-content">
+                    <span>📤</span>
+                    <p>Chọn ảnh X-ray phổi</p>
+                </div>
+            </label>
+
+            <div class="preview">
+                <img id="image-preview" alt="Xem trước ảnh">
+            </div>
+
+            <!-- LAB -->
+            <div class="lab-section">
+                <h3>🧪 Chỉ số lâm sàng (không bắt buộc)</h3>
+
+                <div class="lab-grid">
+                    <div class="lab-item">
+                        <label>CRP (mg/L)</label>
+                        <input type="number" placeholder="VD: 45">
+                    </div>
+
+                    <div class="lab-item">
+                        <label>WBC (10⁹/L)</label>
+                        <input type="number" placeholder="VD: 14">
+                    </div>
+
+                    <div class="lab-item">
+                        <label>SpO₂ (%)</label>
+                        <input type="number" placeholder="VD: 92">
+                    </div>
+
+                    <div class="lab-item">
+                        <label>Nhiệt độ (°C)</label>
+                        <input type="number" step="0.1" placeholder="VD: 38.5">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="predict()">
+                🔍 Bắt đầu chẩn đoán
+            </button>
+
+            <div class="result-box">
+                <span>Kết quả AI:</span>
+                <strong id="result-text">Chưa có</strong>
+            </div>
+        </section>
+
+        <!-- RIGHT -->
+        <section class="panel right-panel">
+            <h2>📄 Báo cáo chẩn đoán</h2>
+
+            <div id="llm-content" class="report-box">
+                Vui lòng tải ảnh và thực hiện chẩn đoán để tạo báo cáo y khoa chi tiết.
+            </div>
+
+            <button class="btn-outline" onclick="downloadReport()">
+                ⬇️ Tải báo cáo (.txt)
+            </button>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
