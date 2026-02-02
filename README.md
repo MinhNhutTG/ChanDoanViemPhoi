@@ -13,4 +13,24 @@
 ![Groq](https://img.shields.io/badge/Groq-FF4F00?style=for-the-badge&logo=groq&logoColor=white)
 
 
+# 📖 Giới Thiệu Đồ Án
 
+.... wait
+
+---
+
+
+## 🚀 Hướng Dẫn Cài Đặt và Chạy Dự Án
+* **Node.js**: Phiên bản 18 trở lên.
+* **MongoDB**: Local hoặc MongoDB Atlas.
+* **Docker**: Khuyên dùng để chạy bằng container đồng nhất môi trường.
+* **Git**: Để clone repository.
+
+### 🛠️ Các Bước Cài Đặt Chi Tiết
+
+#### 1. Clone Repository từ GitHub
+Mở terminal và chạy lệnh sau để tải mã nguồn:
+```bash
+git clone https://github.com/MinhNhutTG/ChanDoanViemPhoi
+cd ChanDoanViemPhoi
+```
