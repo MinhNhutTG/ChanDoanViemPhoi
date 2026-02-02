@@ -1,4 +1,4 @@
-# 🫁 HỆ THỐNG CHẨN ĐOÁN VIÊM PHỔI BẰNG AI
+# 🫁 NGHIÊN CỨU VÀ TRIỂN KHAI MÔ HÌNH CHẨN ĐOÁN VIÊM PHỔI BẰNG TRÍ TUỆ NHÂN TẠO
 
 
 > Ứng dụng hỗ trợ chẩn đoán viêm phổi dựa trên phân tích hình ảnh X-quang phổi và các chỉ số cận lâm sàn bằng Deep Learning
