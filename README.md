@@ -15,14 +15,28 @@
 
 # 📖 Giới Thiệu Đồ Án
 
-.... wait
 
----
 
+## 🌟 Tính Năng Chính
+
+### 🏥 Phân Tích Đa Phương Thức
+- **Dữ liệu hình ảnh**: Xử lý ảnh X-quang ngực thẳng (PA/AP).
+- **Dữ liệu lâm sàng**: Tích hợp các chỉ số quan trọng như Bạch cầu (WBC), CRP, SpO2, Tuổi, v.v.
+
+### 🤖 Core AI Engine (Backend)
+- **Phân Loại (Classification)**: Sử dụng **DenseNet121** để xác định xác suất viêm phổi.
+- **Thể hiện vùng ảnh hưởng**: Dùng Grad-CAM để xác định vùng ảnh hướng.
+- **Tổng Hợp (Reasoning)**: Sử dụng **LLM Llama 3.3 (via Groq Cloud)** để đóng vai trò bác sĩ, tổng hợp báo cáo.
+
+### 📊 Đánh Giá Rủi Ro Tự Động
+- Tự động tính điểm **CURB-65** / **CRB-65** để đánh giá mức độ nghiêm trọng.
+- Phân tầng rủi ro (Ngoại trú vs Nhập viện).
 
 ## 🚀 Hướng Dẫn Cài Đặt và Chạy Dự Án
 * **Docker**: Khuyên dùng để chạy bằng container đồng nhất môi trường.
 * **Git**: Để clone repository.
+
+
 
 ### 🛠️ Các Bước Cài Đặt Chi Tiết
 
