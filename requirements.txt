@@ -5,3 +5,5 @@ torchvision
 pillow
 groq
 dotenv
+opencv-python
+matplotlib

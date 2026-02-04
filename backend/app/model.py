@@ -3,6 +3,7 @@ import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
 
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load kiến trúc
@@ -37,8 +38,8 @@ def predict_image(image_path, model=model):
     confidence = conf.item()
 
     return {
-        "Ket qua": predicted_class,
-        "Do tin cay": confidence
+        "Ket_qua": predicted_class,
+        "Do_tin_cay": confidence
     }
     # return predicted_class, confidence
 
