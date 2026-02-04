@@ -21,8 +21,6 @@
 
 
 ## 🚀 Hướng Dẫn Cài Đặt và Chạy Dự Án
-* **Node.js**: Phiên bản 18 trở lên.
-* **MongoDB**: Local hoặc MongoDB Atlas.
 * **Docker**: Khuyên dùng để chạy bằng container đồng nhất môi trường.
 * **Git**: Để clone repository.
 
