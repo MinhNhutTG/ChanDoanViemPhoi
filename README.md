@@ -109,12 +109,37 @@ cd backend
 python app/main.py
 ```
 ▶️ Chạy Frontend
-```bash
-Mở thư mục frontend
-Nhấn vào biểu tượng Nginx để khởi động web server
-Sau khi khởi động thành công, truy cập: http://localhost
+Frontend được phục vụ bằng web server Nginx.
 
+#### ✅ Bước 1 — Tải Nginx
+
+1. Tải Nginx cho Windows từ trang chính thức
+2. Giải nén, ví dụ tại:  C:\nginx
+3. Sau khi giải nén sẽ có cấu trúc:
+   ```bash
+   nginx.exe
+   conf/
+   html/
+   logs/
+   ```
+#### ✅ Bước 2 — Copy mã nguồn frontend
+
+Trong project, mở thư mục:  frontend/
+Copy toàn bộ file frontend (HTML, CSS, JS) vào: C:\nginx\html\
+Nếu có file mặc định trong thư mục html của Nginx, hãy xóa hoặc ghi đè.
+
+#### ✅ Bước 3 — Khởi động Nginx
+
+Mở PowerShell và chạy:
+
+```powershell
+cd C:\nginx
+.\nginx.exe
 ```
+
+#### ✅ Bước 4 — Truy cập frontend
+Mở trình duyệt tại: http://localhost
+
 # Thesis
 # CHƯƠNG I: ĐẶT VẤN ĐỀ
 ## 1.1 Tính cấp thiết của đề tài
