@@ -36,7 +36,42 @@
 * **Docker**: Khuyên dùng để chạy bằng container đồng nhất môi trường.
 * **Git**: Để clone repository.
 
-
+## 🏗️ Kiến Trúc Tổng Thể
+``` bash
+[ Web Browser ]
+      │
+      │ HTTPS POST (clinical data + X-ray image)
+      ▼
+[ Web Frontend ]
+      │
+      ▼
+[ API Gateway / Backend Server ]
+      │
+      ├──► [ Clinical Data Processor ]
+      │         └─ chuẩn hóa, encode feature vector
+      │
+      ├──► [ Image Processing Service ]
+      │         ├─ tiền xử lý ảnh (resize, normalize)
+      │         └─ CNN / Vision Model → image features
+      │
+      ├──► [ Multimodal Fusion Model ]
+      │         ├─ concat / attention fusion
+      │         └─ Pneumonia Prediction
+      │
+      ├──► [ Report Generation Service ]
+      │         └─ LLM tạo báo cáo y khoa
+      │
+      ├──► [ Database / Storage ]
+      │         ├─ lưu ảnh X-ray
+      │         ├─ lưu thông tin bệnh nhân
+      │         └─ lưu kết quả chẩn đoán
+      │
+      ▼
+[ Response Formatter ]
+      │
+      ▼
+[ Web Frontend UI hiển thị kết quả ] 
+```
 
 ### 🛠️ Các Bước Cài Đặt Chi Tiết
 
