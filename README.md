@@ -72,6 +72,9 @@
       ▼
 [ Web Frontend UI hiển thị kết quả ] 
 ```
+## 🖥️ Giao Diện Chính
+<img width="1266" height="777" alt="image" src="https://github.com/user-attachments/assets/0a801fd5-fd4d-414b-8621-9842b39fe28b" />
+
 
 ### 🛠️ Các Bước Cài Đặt Chi Tiết
 
