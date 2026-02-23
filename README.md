@@ -173,8 +173,8 @@ Phát triển mô-đun sinh báo cáo y khoa tự động dựa trên kỹ thu�
 Phạm vi ứng dụng: Đề tài tập trung vào việc chẩn đoán viêm phổi thông qua dữ liệu hình ảnh X-quang và dữ liệu lâm sàng.
 
 ## 1.5 Ý nghĩa khoa học và thực tiễn
-### Giá trị khoa học:
+#### Giá trị khoa học:
 Đóng góp vào lĩnh vực AI y tế về cách tiếp cận đa phương thức, giúp hiểu rõ hơn sự kết hợp giữa thông tin hình ảnh và ngữ cảnh lâm sàng.
-### Giá trị thực tiễn:
+#### Giá trị thực tiễn:
 Cung cấp công cụ hỗ trợ bác sĩ ra quyết định nhanh chóng, giảm thiểu sai sót chủ quan và chuẩn hóa quy trình viết báo cáo lâm sàng tại bệnh viện.
 
