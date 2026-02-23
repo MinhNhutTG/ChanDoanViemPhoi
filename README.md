@@ -98,7 +98,7 @@ Linux: source .venv/bin/activate
 pip install -r requirements.txt
 ```
 #### 5. Thiết lập Environment Variables
-Tạo file .env trong thư mục backend/ với nội dung:
+Tạo file .env trong thư mục gốc với nội dung:
 ```bash
 GROQ_API_KEY=your_api_key
 ```
