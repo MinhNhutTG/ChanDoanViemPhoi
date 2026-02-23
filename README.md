@@ -84,7 +84,37 @@ Mở terminal và chạy lệnh sau để tải mã nguồn:
 git clone https://github.com/MinhNhutTG/ChanDoanViemPhoi
 cd ChanDoanViemPhoi
 ```
+#### 2. Tạo Virtual Environment
+```bash
+python -m venv .venv
+```
+#### 3. Kích hoạt môi trường
+```bash
+Windows: .venv\Scripts\activate
+Linux: source .venv/bin/activate
+```
+#### 4. Cài đặt Dependencies
+```bash
+pip install -r requirements.txt
+```
+#### 5. Thiết lập Environment Variables
+Tạo file .env trong thư mục backend/ với nội dung:
+```bash
+GROQ_API_KEY=your_api_key
+```
+#### 6. Khởi chạy ứng dụng
+▶️ Chạy Backend
+```bash
+cd backend
+python app/main.py
+```
+▶️ Chạy Frontend
+```bash
+Mở thư mục frontend
+Nhấn vào biểu tượng Nginx để khởi động web server
+Sau khi khởi động thành công, truy cập: http://localhost
 
+```
 # Thesis
 # CHƯƠNG I: ĐẶT VẤN ĐỀ
 ## 1.1 Tính cấp thiết của đề tài
