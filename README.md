@@ -178,3 +178,17 @@ Phạm vi ứng dụng: Đề tài tập trung vào việc chẩn đoán viêm p
 #### Giá trị thực tiễn:
 Cung cấp công cụ hỗ trợ bác sĩ ra quyết định nhanh chóng, giảm thiểu sai sót chủ quan và chuẩn hóa quy trình viết báo cáo lâm sàng tại bệnh viện.
 
+
+# CHƯƠNG II: TỔNG QUAN CƠ SỞ LÝ THUYẾT
+### Các nghiên cứu tổng quát
+### Phân tích hệ thống hiện có
+### Cơ sở lý thuyết
+### Các công nghệ sử dụng
+
+# CHƯƠNG III: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+### 3.1 Kiến trúc tổng thể
+### 3.2 Use Case
+### 3.3 Thiết kế dữ liệu
+### 3.4 Thiết kế API
+### 3.5 Thiết kế giao diện
+
