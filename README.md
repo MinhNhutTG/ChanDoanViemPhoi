@@ -180,15 +180,15 @@ Cung cấp công cụ hỗ trợ bác sĩ ra quyết định nhanh chóng, giả
 
 
 # CHƯƠNG II: TỔNG QUAN CƠ SỞ LÝ THUYẾT
-### Các nghiên cứu tổng quát
-### Phân tích hệ thống hiện có
-### Cơ sở lý thuyết
-### Các công nghệ sử dụng
+## 2.1 Các nghiên cứu tổng quát
+## 2.2 Phân tích hệ thống hiện có
+## 2.3 Cơ sở lý thuyết
+## 2.4 Các công nghệ sử dụng
 
 # CHƯƠNG III: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
-### 3.1 Kiến trúc tổng thể
-### 3.2 Use Case
-### 3.3 Thiết kế dữ liệu
-### 3.4 Thiết kế API
-### 3.5 Thiết kế giao diện
+## 3.1 Kiến trúc tổng thể
+## 3.2 Use Case
+## 3.3 Thiết kế dữ liệu
+## 3.4 Thiết kế API
+## 3.5 Thiết kế giao diện
 
