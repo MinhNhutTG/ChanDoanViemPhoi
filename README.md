@@ -1,7 +1,7 @@
 # 🫁 NGHIÊN CỨU VÀ TRIỂN KHAI MÔ HÌNH CHẨN ĐOÁN VIÊM PHỔI BẰNG TRÍ TUỆ NHÂN TẠO
 
 
-> Ứng dụng hỗ trợ chẩn đoán viêm phổi dựa trên phân tích hình ảnh X-quang phổi và các chỉ số cận lâm sàn bằng Deep Learning
+> Xây dựng hệ thống chẩn đoán viêm phổi từ ảnh X-quang ngực và trực quan hóa kết quả bằng Grad-CAM
 
 
 ![University](https://img.shields.io/badge/Nam%20Can%20Tho%20University-red?style=for-the-badge)
@@ -19,18 +19,29 @@
 
 ## 🌟 Tính Năng Chính
 
-### 🏥 Phân Tích Đa Phương Thức
-- **Dữ liệu hình ảnh**: Xử lý ảnh X-quang ngực thẳng (PA/AP).
-- **Dữ liệu lâm sàng**: Tích hợp các chỉ số quan trọng như Bạch cầu (WBC), CRP, SpO2, Tuổi, v.v.
+### 🏥 Phân Tích Ảnh X-quang Ngực
+- Tiếp nhận ảnh X-quang ngực (PA/AP).
+- Tiền xử lý dữ liệu: resize, normalization.
+- Phân loại tình trạng:
+  - **Normal**
+  - **Pneumonia**
 
-### 🤖 Core AI Engine (Backend)
-- **Phân Loại (Classification)**: Sử dụng **ResNet** để xác định xác suất viêm phổi.
-- **Thể hiện vùng ảnh hưởng**: Dùng Grad-CAM để xác định vùng ảnh hướng.
-- **Tổng Hợp (Reasoning)**: Sử dụng **LLM Llama 3.3 (via Groq Cloud)** để đóng vai trò bác sĩ, tổng hợp báo cáo.
+---
 
-### 📊 Đánh Giá Rủi Ro Tự Động
-- Tự động tính điểm **CURB-65** / **CRB-65** để đánh giá mức độ nghiêm trọng.
-- Phân tầng rủi ro (Ngoại trú vs Nhập viện).
+## 🤖 Core AI Engine
+
+### 🔍 Phân Loại Ảnh
+- Sử dụng mô hình **ResNet50 (CNN)**.
+- Huấn luyện trên dữ liệu X-quang ngực.
+- Trả về xác suất dự đoán cho từng lớp.
+
+### 🔥 Giải Thích Mô Hình (Explainable AI)
+- Ứng dụng kỹ thuật **Grad-CAM**.
+- Sinh bản đồ nhiệt (heatmap).
+- Overlay heatmap lên ảnh gốc.
+- Hiển thị vùng ảnh có ảnh hưởng lớn đến quyết định của mô hình.
+
+---
 
 ## 🚀 Hướng Dẫn Cài Đặt và Chạy Dự Án
 * **Docker**: Khuyên dùng để chạy bằng container đồng nhất môi trường.
