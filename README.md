@@ -143,40 +143,69 @@ Mở trình duyệt tại: http://localhost
 # Thesis
 # CHƯƠNG I: ĐẶT VẤN ĐỀ
 ## 1.1 Tính cấp thiết của đề tài
-Viêm phổi là một trong những bệnh lý hô hấp nghiêm trọng, nằm trong nhóm nguyên nhân hàng đầu gây tử vong và nhập viện trên toàn cầu. Tỷ lệ mắc cao cùng diễn tiến bệnh nhanh khiến việc chẩn đoán sớm và chính xác trở thành yếu tố then chốt trong điều trị hiệu quả và giảm nguy cơ biến chứng.
+Viêm phổi là một bệnh lý hô hấp nghiêm trọng, thuộc nhóm nguyên nhân hàng đầu gây tử vong và nhập viện trên toàn thế giới. Bệnh có thể tiến triển nhanh, đặc biệt ở trẻ nhỏ, người cao tuổi và bệnh nhân suy giảm miễn dịch. Vì vậy, việc phát hiện sớm và chẩn đoán chính xác đóng vai trò quan trọng trong điều trị kịp thời và giảm thiểu biến chứng.
 
-Trong thực hành lâm sàng, chẩn đoán viêm phổi chủ yếu dựa trên hình ảnh X-quang ngực kết hợp với kết quả xét nghiệm cận lâm sàng và thông tin tiền sử bệnh của bệnh nhân. Tuy nhiên, sự gia tăng nhanh chóng về số lượng ca bệnh đã tạo áp lực lớn lên hệ thống y tế, đặc biệt là đội ngũ bác sĩ chẩn đoán hình ảnh. Khối lượng phim cần đọc ngày càng nhiều không chỉ làm tăng nguy cơ quá tải mà còn dẫn đến khả năng chậm trễ trong chẩn đoán và sai sót trong quá trình phân tích hình ảnh, từ đó ảnh hưởng trực tiếp đến chất lượng điều trị và tiên lượng bệnh nhân.
+Trong thực tế lâm sàng, hình ảnh X-quang ngực là phương tiện chẩn đoán phổ biến và có chi phí thấp trong phát hiện viêm phổi. Tuy nhiên, số lượng bệnh nhân ngày càng tăng đã tạo áp lực lớn cho bác sĩ chẩn đoán hình ảnh. Khối lượng phim X-quang cần đọc nhiều có thể dẫn đến quá tải, làm tăng nguy cơ sai sót hoặc chậm trễ trong quá trình đánh giá.
 
-Trong bối cảnh đó, việc ứng dụng các phương pháp hỗ trợ chẩn đoán tự động nhằm nâng cao độ chính xác, rút ngắn thời gian đọc phim và giảm gánh nặng cho nhân viên y tế trở thành một hướng nghiên cứu có ý nghĩa thực tiễn và cấp thiết.
+Những năm gần đây, các mô hình học sâu (Deep Learning), đặc biệt là mạng nơ-ron tích chập (CNN), đã chứng minh hiệu quả cao trong phân tích ảnh y tế. Tuy nhiên, phần lớn các mô hình này hoạt động như một “hộp đen”, chỉ đưa ra kết quả dự đoán mà không giải thích được cơ sở của quyết định. Trong lĩnh vực y tế, tính minh bạch và khả năng giải thích là yếu tố rất quan trọng để tạo niềm tin và hỗ trợ bác sĩ trong quá trình ra quyết định.
+
+Do đó, việc xây dựng một hệ thống chẩn đoán viêm phổi từ ảnh X-quang kết hợp với cơ chế giải thích bằng kỹ thuật Grad-CAM nhằm hiển thị vùng ảnh quan trọng là một hướng nghiên cứu có ý nghĩa thực tiễn cao.
 
 ## 1.2 Lý do chọn đề tài
-Các nghiên cứu hiện nay trong lĩnh vực trí tuệ nhân tạo y sinh chủ yếu tập trung vào mô hình đơn phương thức, khai thác riêng lẻ dữ liệu hình ảnh y khoa. Tuy nhiên, trong thực tế lâm sàng, quyết định chẩn đoán không chỉ dựa vào hình ảnh mà còn phụ thuộc vào các yếu tố lâm sàng như tuổi, triệu chứng, chỉ số xét nghiệm và tiền sử bệnh.
+Mặc dù các mô hình học sâu có thể đạt độ chính xác cao trong phân loại viêm phổi, nhưng nếu chỉ đưa ra nhãn dự đoán (ví dụ: “Pneumonia” hoặc “Normal”) thì chưa đủ để ứng dụng trong môi trường lâm sàng. Bác sĩ cần biết mô hình dựa vào vùng nào trên ảnh để đưa ra kết luận.
 
-Việc tích hợp nhiều nguồn dữ liệu khác nhau trong một hệ thống AI đa phương thức cho phép mô hình khai thác thông tin toàn diện hơn, từ đó nâng cao độ chính xác chẩn đoán và khả năng suy luận lâm sàng. Đồng thời, khả năng tự động sinh báo cáo y khoa từ kết quả phân tích sẽ góp phần chuẩn hóa quy trình, tiết kiệm thời gian và hỗ trợ bác sĩ trong thực hành lâm sàng.
+Kỹ thuật Grad-CAM (Gradient-weighted Class Activation Mapping) cho phép trực quan hóa vùng ảnh có ảnh hưởng lớn nhất đến quyết định của mô hình thông qua bản đồ nhiệt (heatmap). Việc hiển thị vùng phổi được mô hình “chú ý” sẽ giúp:
 
-Do đó, nghiên cứu xây dựng hệ thống AI đa phương thức phục vụ chẩn đoán viêm phổi là hướng tiếp cận có tính ứng dụng cao và ý nghĩa thực tiễn rõ rệt.
+ * Tăng tính minh bạch của hệ thống AI
+
+ * Hỗ trợ bác sĩ kiểm tra lại kết quả dự đoán
+
+ * Phát hiện các trường hợp mô hình học sai hoặc tập trung vào vùng không phù hợp
+
+Vì vậy, đề tài tập trung xây dựng hệ thống chẩn đoán viêm phổi dựa trên học sâu và tích hợp cơ chế giải thích Grad-CAM để nâng cao tính tin cậy và khả năng ứng dụng thực tế.
 
 ## 1.3 Mục tiêu nghiên cứu
 ### Mục tiêu tổng quát
 
-Xây dựng hệ thống trí tuệ nhân tạo đa phương thức có khả năng chẩn đoán viêm phổi dựa trên hình ảnh X-quang ngực kết hợp dữ liệu lâm sàng, đồng thời tự động sinh báo cáo y khoa tương ứng.
+ * Xây dựng hệ thống học sâu có khả năng chẩn đoán viêm phổi từ ảnh X-quang ngực và trực quan hóa vùng ảnh quan trọng thông qua kỹ thuật Grad-CAM.
 
 ### Mục tiêu cụ thể
 
-Xây dựng và huấn luyện mô hình học sâu để trích xuất đặc trưng và phân loại bệnh từ hình ảnh X-quang ngực.
-Thiết kế cơ chế tích hợp dữ liệu đa phương thức giữa hình ảnh và thông tin lâm sàng.
-Phát triển mô-đun sinh báo cáo y khoa tự động dựa trên kỹ thuật xử lý ngôn ngữ tự nhiên.
-Đánh giá hiệu năng hệ thống theo các tiêu chí chẩn đoán và chất lượng báo cáo.
+ * Thu thập và tiền xử lý dữ liệu ảnh X-quang ngực phục vụ huấn luyện mô hình.
+
+ * Xây dựng và huấn luyện mô hình CNN (ví dụ: ResNet) để phân loại viêm phổi.
+
+ * Tích hợp phương pháp Grad-CAM để sinh bản đồ nhiệt thể hiện vùng ảnh ảnh hưởng đến dự đoán.
+
+ * Đánh giá hiệu năng mô hình theo các chỉ số như Accuracy, Precision, Recall, F1-score và Confusion Matrix.
+
+ * Phân tích và so sánh giữa kết quả dự đoán và vùng được mô hình chú ý nhằm đánh giá tính hợp lý của hệ thống.
 
 ## 1.4 Đối tượng và phạm vi
-Đối tượng nghiên cứu: Các thuật toán học máy, các bộ dữ liệu y tế về viêm phổi.
-Phạm vi ứng dụng: Đề tài tập trung vào việc chẩn đoán viêm phổi thông qua dữ liệu hình ảnh X-quang và dữ liệu lâm sàng.
+### Đối tượng nghiên cứu:
+ * Các mô hình học sâu dùng trong phân tích ảnh y tế.
+
+ * Kỹ thuật giải thích mô hình (Explainable AI), cụ thể là Grad-CAM.
+
+ * Dữ liệu ảnh X-quang ngực phục vụ chẩn đoán viêm phổi.
+### Phạm vi nghiên cứu:
+ * Đề tài chỉ tập trung vào dữ liệu hình ảnh X-quang ngực.
+
+ * Hệ thống thực hiện phân loại viêm phổi (2 hoặc 3 lớp tùy bộ dữ liệu).
+
+ * Không bao gồm tích hợp dữ liệu lâm sàng hay sinh báo cáo tự động.
 
 ## 1.5 Ý nghĩa khoa học và thực tiễn
 #### Giá trị khoa học:
-Đóng góp vào lĩnh vực AI y tế về cách tiếp cận đa phương thức, giúp hiểu rõ hơn sự kết hợp giữa thông tin hình ảnh và ngữ cảnh lâm sàng.
+ * Góp phần nghiên cứu và ứng dụng Explainable AI trong lĩnh vực chẩn đoán hình ảnh y tế.
+
+ * Làm rõ vai trò của Grad-CAM trong việc tăng tính minh bạch và khả năng giải thích của mô hình học sâu.
 #### Giá trị thực tiễn:
-Cung cấp công cụ hỗ trợ bác sĩ ra quyết định nhanh chóng, giảm thiểu sai sót chủ quan và chuẩn hóa quy trình viết báo cáo lâm sàng tại bệnh viện.
+ * Hỗ trợ bác sĩ trong quá trình đọc phim X-quang bằng cách cung cấp thêm thông tin trực quan về vùng nghi ngờ viêm phổi.
+
+ * Giảm áp lực phân tích thủ công khi số lượng bệnh nhân lớn.
+
+ * Tăng mức độ tin cậy khi ứng dụng AI trong môi trường lâm sàng.
 
 
 # CHƯƠNG II: TỔNG QUAN CƠ SỞ LÝ THUYẾT
