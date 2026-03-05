@@ -1,127 +1,82 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
-    <title>AI Chẩn Đoán Viêm Phổi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>PneumoScan AI - Chẩn đoán Viêm Phổi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 15px; }
+    </style>
 </head>
+<body class="gradient-bg min-h-screen font-sans text-gray-800">
 
-<body>
+    <header class="p-6 bg-white shadow-sm flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-lungs-virus text-blue-600 text-3xl"></i>
+            <h1 class="text-2xl font-bold text-gray-700">PneumoScan <span class="text-blue-600">AI</span></h1>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-sm font-medium text-gray-500">Hệ thống sẵn sàng</span>
+        </div>
+    </header>
 
-    <div class="app-wrapper">
+    <main class="max-w-6xl mx-auto p-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="glass-card p-6 shadow-xl">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-upload mr-2 text-blue-500"></i> Tải lên ảnh X-quang
+            </h2>
+            
+            <div id="dropzone" class="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center hover:border-blue-500 transition-all cursor-pointer bg-blue-50">
+                <input type="file" id="fileInput" class="hidden" accept="image/*">
+                <div id="upload-prompt">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-blue-400 mb-3"></i>
+                    <p class="text-gray-600">Kéo thả ảnh vào đây hoặc <span class="text-blue-600 font-bold">chọn file</span></p>
+                </div>
+                <img id="imagePreview" class="hidden mt-2 rounded-lg max-h-64 mx-auto shadow-md border-2 border-white">
+            </div>
 
-        <!-- HEADER -->
-        <header class="app-header">
-            <h1>🩺 AI Chẩn Đoán Viêm Phổi</h1>
-            <p>Phân tích ảnh X-ray kết hợp chỉ số lâm sàng</p>
-        </header>
+            <button id="analyzeBtn" class="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-all flex justify-center items-center" onclick="predict()">
+                <i class="fas fa-stethoscope mr-2"></i> Bắt đầu chẩn đoán
+            </button>
+        </div>
 
-        <!-- MAIN -->
-        <main class="app-card">
+        <div class="glass-card p-6 shadow-xl">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-poll-h mr-2 text-green-500"></i> Kết quả phân tích
+            </h2>
 
-            <!-- LEFT -->
-            <section class="panel left-panel">
-                <h2>📥 Dữ liệu đầu vào</h2>
+            <div id="no-result" class="h-64 flex flex-col justify-center items-center text-gray-400 italic text-center">
+                <i class="fas fa-microscope text-4xl mb-2 opacity-20"></i>
+                <p>Kết quả chẩn đoán và ảnh GradCAM<br>sẽ hiển thị tại đây</p>
+            </div>
 
-                <!-- Upload -->
-                <label class="upload-box">
-                    <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
-                    <div class="upload-content">
-                        <span>📤</span>
-                        <p>Chọn ảnh X-ray phổi</p>
+            <div id="result-content" class="hidden space-y-6">
+                <div id="result-badge" class="p-4 rounded-lg border-l-4 shadow-sm">
+                    <p class="text-xs uppercase font-bold opacity-70">Trạng thái chẩn đoán:</p>
+                    <h3 id="prediction-text" class="text-2xl font-black uppercase tracking-tight">Đang phân tích...</h3>
+                </div>
+
+                <div>
+                    <p class="text-sm font-semibold text-gray-600 mb-2 italic">
+                        <i class="fas fa-map-marker-alt text-red-500 mr-1"></i> Bản đồ nhiệt Grad-CAM:
+                    </p>
+                    <div class="relative rounded-lg overflow-hidden border-2 border-gray-100 bg-gray-900 shadow-inner">
+                        <img id="gradcam-image" src="" alt="GradCAM Result" class="w-full h-auto min-h-[250px] object-contain">
                     </div>
-                </label>
-
-                <div class="preview">
-                    <img id="image-preview" alt="Xem trước ảnh">
                 </div>
-
-                <!-- LAB -->
-                <div class="lab-section">
-                    <h3>🧪 Chỉ số lâm sàng (không bắt buộc)</h3>
-
-                    <div class="lab-grid">
-                        <div class="lab-item">
-                            <label>CRP (mg/L)</label>
-                            <input type="number" placeholder="VD: 45">
-                        </div>
-
-                        <div class="lab-item">
-                            <label>WBC (10⁹/L)</label>
-                            <input type="number" placeholder="VD: 14">
-                        </div>
-
-                        <div class="lab-item">
-                            <label>SpO₂ (%)</label>
-                            <input type="number" placeholder="VD: 92">
-                        </div>
-
-                        <div class="lab-item">
-                            <label>Nhiệt độ (°C)</label>
-                            <input type="number" step="0.1" placeholder="VD: 38.5">
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="predict()">
-                    🔍 Bắt đầu chẩn đoán
-                </button>
-
-                <div class="result-box">
-                    <span>Kết quả AI:</span>
-                    <strong id="result-text">Chưa có</strong>
-                </div>
-            </section>
-
-            <!-- RIGHT -->
-            <section class="panel right-panel">
-
-                <h2>📄 Kết quả & Hình ảnh</h2>
-
-                <!-- TAB HEADER -->
-                <div class="tab-header">
-                    <button class="tab-btn active" onclick="switchTab('image-tab')">
-                        🖼️ Ảnh X-ray
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('report-tab')">
-                        📄 Báo cáo chẩn đoán
-                    </button>
-                </div>
-
-                <!-- TAB CONTENT -->
-                <div class="tab-content">
-
-                    <!-- IMAGE TAB -->
-                    <div id="image-tab" class="tab-panel active">
-                        <div class="xray-viewer">
-                            <img id="heatmap-image" alt="Ảnh X-ray">
-                            <p class="hint-text">Ảnh X-ray sẽ hiển thị tại đây</p>
-                        </div>
-                    </div>
-
-                    <!-- REPORT TAB -->
-                    <div id="report-tab" class="tab-panel">
-                        <div id="llm-content" class="report-box">
-                            Vui lòng tải ảnh và thực hiện chẩn đoán để tạo báo cáo y khoa chi tiết.
-                        </div>
-
-                        <button class="btn-outline" onclick="downloadReport()">
-                            ⬇️ Tải báo cáo (.txt)
-                        </button>
-                    </div>
-
-                </div>
-
-            </section>
-
-
-        </main>
-
+            </div>
+        </div>
     </div>
-
+    
+    <p class="text-center text-xs text-gray-500 mt-12 italic">Hệ thống hỗ trợ chẩn đoán hình ảnh y khoa sử dụng Deep Learning.</p>
+</main>
     <script src="script.js"></script>
+    
 </body>
-
 </html>
