@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from model import predict_image
-from grad_CAM import run_gradcam
+from services.predict_service import predict_image
+from services.gradcam_service import run_gradcam
+from schemas.response_schema import PredictionData, ApiResponse
+# Các import khác giữ nguyên...
 from io import BytesIO
 
 app = Flask(__name__)
@@ -28,12 +30,21 @@ def predict_api():
                               save_path="models/output/grad_cam_api.png",
                               device="cpu")
 
+
+
+    prediction_data = PredictionData(
+                            prediction=result["prediction_service"],
+                            confidence=result["confidence_service"],
+                            heatmap_url=f"data:image/png;base64,{heatmap_base64}"
+                        )
     
-    return jsonify({
-        "ket_qua": result["Ket_qua"],
-        "do_tin_cay": result["Do_tin_cay"],
-        "image_url": f"data:image/png;base64,{heatmap_base64}" # Gửi kèm prefix
-    })
+    response = ApiResponse(
+        success=True,
+        prediction=prediction_data
+    )
+
+
+    return jsonify(response.to_dict())
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000)

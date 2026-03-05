@@ -38,8 +38,8 @@ def predict_image(image_path, model=model):
     confidence = conf.item()
 
     return {
-        "Ket_qua": predicted_class,
-        "Do_tin_cay": confidence
+        "prediction_service": predicted_class,
+        "confidence_service": confidence
     }
     # return predicted_class, confidence
 
