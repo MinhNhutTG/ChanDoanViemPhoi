@@ -222,10 +222,171 @@ Vì vậy, đề tài tập trung xây dựng hệ thống chẩn đoán viêm p
 
 # CHƯƠNG II: TỔNG QUAN CƠ SỞ LÝ THUYẾT
 ## 2.1 Các nghiên cứu tổng quát
-## 2.2 Phân tích hệ thống hiện có
-## 2.3 Cơ sở lý thuyết
-## 2.4 Các công nghệ sử dụng
+### 2.1.1 Tổng quan chẩn đoán viêm phổi bằng X-ray
+<img width="850" height="318" alt="image" src="https://github.com/user-attachments/assets/72c1a493-6bc8-4b85-8957-79a2012cf964" />
 
+Viêm phổi là một bệnh nhiễm trùng nghiêm trọng ảnh hưởng đến phổi, gây ra bởi vi khuẩn, virus hoặc nấm. Trong y học, chụp X-ray ngực (Chest X-ray) là phương pháp phổ biến để phát hiện các dấu hiệu bất thường trong phổi như:
+  * Vùng mờ (opacity)
+  * Tổn thương mô phổi
+  * Dịch trong phế nang
+    
+Tuy nhiên, việc đọc ảnh X-ray đòi hỏi bác sĩ chuyên khoa chẩn đoán hình ảnh và dễ xảy ra sai sót khi:
+
+ * Số lượng bệnh nhân lớn
+ * Chất lượng ảnh thấp
+ * Tổn thương nhỏ khó nhận biết
+
+Vì vậy, nhiều nghiên cứu gần đây đã áp dụng trí tuệ nhân tạo (AI) nhằm hỗ trợ phát hiện bệnh viêm phổi tự động.
+### 2.1.2 Ứng dụng Deep Learning trong chẩn đoán hình ảnh y khoa
+Deep Learning đã đạt được nhiều thành công trong lĩnh vực Medical Image Analysis. Các mạng nơ-ron tích chập (CNN) có khả năng tự động học đặc trưng từ ảnh y tế.
+| Nghiên cứu | Phương pháp | Kết quả |
+|:-----|:----:|-----:|
+| Rajpurkar et al. | CheXNet (DenseNet121) | Accuracy ~0.76 |
+| Kermany et al. | CNN classification | Accuracy ~0.90 |
+
+Các nghiên cứu này cho thấy Deep Learning có thể đạt độ chính xác tương đương hoặc cao hơn bác sĩ trong một số trường hợp.
+
+Tuy nhiên, một hạn chế lớn của các mô hình Deep Learning là tính black-box, nghĩa là khó giải thích tại sao mô hình đưa ra dự đoán.
+### 2.1.3 Explainable AI trong y học
+Trong các hệ thống AI y tế, việc giải thích kết quả dự đoán là rất quan trọng để:
+ * Tăng độ tin cậy của bác sĩ
+ * Kiểm chứng tính hợp lý của mô hình
+ * Hỗ trợ quá trình chẩn đoán
+
+Explainable AI (XAI) giúp hiển thị vùng ảnh quan trọng mà mô hình sử dụng để đưa ra dự đoán.
+
+Một trong các phương pháp phổ biến nhất là Grad-CAM.
+## 2.2 Phân tích hệ thống hiện có
+### 2.2.1 Hệ thống chẩn đoán truyền thống
+Quy trình chẩn đoán thông thường:
+```bash
+Bệnh nhân
+   ↓
+Chụp X-ray
+   ↓
+Bác sĩ phân tích ảnh
+   ↓
+Kết luận chẩn đoán
+```
+Nhược điểm:
+ * Phụ thuộc vào kinh nghiệm bác sĩ
+ * Mất nhiều thời gian
+ * Dễ xảy ra sai sót
+
+### 2.2.2 Hệ thống chẩn đoán dựa trên AI
+Các hệ thống AI hiện nay sử dụng pipeline:
+```bash
+X-ray image
+   ↓
+Preprocessing
+   ↓
+Deep Learning Model
+   ↓
+Prediction
+```
+Ưu điểm:
+ * Xử lý nhanh
+ * Tự động hóa
+ * Độ chính xác cao
+   
+Tuy nhiên, nhiều hệ thống vẫn thiếu:
+ * Khả năng giải thích kết quả
+ * Giao diện thân thiện cho người dùng
+## 2.3 Cơ sở lý thuyết
+### 2.3.1 Deep Learning và Convolutional Neural Network (CNN)
+Deep Learning là một nhánh của Machine Learning sử dụng các mạng nơ-ron sâu để học và trích xuất đặc trưng từ dữ liệu. Trong lĩnh vực xử lý ảnh, Convolutional Neural Network (CNN) là kiến trúc phổ biến và hiệu quả nhất.
+
+CNN là một loại mạng nơ-ron nhân tạo được thiết kế đặc biệt để xử lý dữ liệu hình ảnh. Mạng CNN có khả năng tự động học các đặc trưng quan trọng từ ảnh thay vì phải thiết kế đặc trưng thủ công như các phương pháp truyền thống.
+
+Cấu trúc cơ bản của CNN gồm các lớp chính:
+ * Convolution Layer: thực hiện phép tích chập để trích xuất đặc trưng từ ảnh
+ * Pooling Layer: giảm kích thước dữ liệu và giữ lại đặc trưng quan trọng
+ * Fully Connected Layer: thực hiện quá trình phân loại dựa trên các đặc trưng đã học
+
+```bash
+Input Image
+   ↓
+Convolution
+   ↓
+Pooling
+   ↓
+Feature Extraction
+   ↓
+Fully Connected Layer
+   ↓
+Classification
+```
+Nhờ cơ chế học đặc trưng tự động, CNN được ứng dụng rộng rãi trong nhiều bài toán thị giác máy tính như nhận dạng ảnh, phát hiện đối tượng và chẩn đoán hình ảnh y khoa.
+
+### 2.3.2 Transfer Learning
+Transfer Learning là phương pháp sử dụng các mô hình đã được huấn luyện trước trên các tập dữ liệu lớn (như ImageNet) để áp dụng cho một bài toán mới. Thay vì huấn luyện mô hình từ đầu, mô hình pretrained có thể được fine-tune để phù hợp với dữ liệu của bài toán.
+
+Một số mô hình CNN phổ biến được sử dụng trong Transfer Learning gồm:
+ * ResNet
+ * DenseNet
+ * EfficientNet
+
+Ưu điểm của Transfer Learning: 
+ * Giảm thời gian huấn luyện mô hình
+ * Tăng độ chính xác của hệ thống
+ * Yêu cầu ít dữ liệu huấn luyện hơn
+
+### 2.3.3 Grad-CAM
+Grad-CAM (Gradient-weighted Class Activation Mapping) là một phương pháp Explainable AI giúp xác định vùng ảnh quan trọng đối với dự đoán của mô hình.
+
+Nguyên lý:
+1. Lấy feature map từ lớp convolution cuối.
+2. Tính gradient của lớp dự đoán theo feature map.
+3. Tính trọng số trung bình của gradient.
+4. Kết hợp các feature map để tạo heatmap.
+
+Công thức: 
+
+$$ LGrad−CAM​=ReLU(k∑​αk​Ak) $$
+
+Trong đó:
+ * Ak: Feature map
+ * αk: Trọng số gradient
+
+Heatmap được chồng lên ảnh X-ray để hiển thị vùng mà mô hình tập trung.
+
+## 2.4 Các công nghệ sử dụng
+Hệ thống trong đề tài sử dụng các công nghệ sau:
+### 2.4.1 Python
+Python là ngôn ngữ lập trình phổ biến trong lĩnh vực AI và Machine Learning nhờ:
+ * Thư viện phong phú
+ * Dễ phát triển mô hình
+### 2.4.2 PyTorch
+PyTorch là framework Deep Learning được sử dụng để:
+ * Xây dựng mô hình CNN
+ * Huấn luyện mô hình
+ * Thực hiện dự đoán
+Ưu điểm:
+ * Dễ sử dụng
+ * Hỗ trợ GPU
+ * Cộng đồng lớn
+### 2.4.3 OpenCV và thư viện xử lý ảnh
+Các thư viện xử lý ảnh được sử dụng để:
+ * Đọc ảnh X-ray
+ * Resize ảnh
+ * Chuẩn hóa dữ liệu
+### 2.4.4 Flask / FastAPI
+Backend của hệ thống được xây dựng bằng Python framework như:
+ * Flask
+ * FastAPI
+Chức năng:
+ * Nhận ảnh từ người dùng
+ * Gọi mô hình AI
+ * Trả về kết quả dự đoán
+### 2.4.5 HTML, CSS và JavaScript
+Frontend của website được xây dựng bằng:
+ * HTML
+ * CSS
+ * JavaScript
+Chức năng:
+ * Upload ảnh X-ray
+ * Hiển thị kết quả
+ * Hiển thị Grad-CAM heatmap
 # CHƯƠNG III: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
 ## 3.1 Kiến trúc tổng thể
 ## 3.2 Use Case
