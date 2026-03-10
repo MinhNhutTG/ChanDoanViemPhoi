@@ -49,39 +49,25 @@
 
 ## 🏗️ Kiến Trúc Tổng Thể
 ``` bash
-[ Web Browser ]
-      │
-      │ HTTPS POST (clinical data + X-ray image)
-      ▼
-[ Web Frontend ]
-      │
-      ▼
-[ API Gateway / Backend Server ]
-      │
-      ├──► [ Clinical Data Processor ]
-      │         └─ chuẩn hóa, encode feature vector
-      │
-      ├──► [ Image Processing Service ]
-      │         ├─ tiền xử lý ảnh (resize, normalize)
-      │         └─ CNN / Vision Model → image features
-      │
-      ├──► [ Multimodal Fusion Model ]
-      │         ├─ concat / attention fusion
-      │         └─ Pneumonia Prediction
-      │
-      ├──► [ Report Generation Service ]
-      │         └─ LLM tạo báo cáo y khoa
-      │
-      ├──► [ Database / Storage ]
-      │         ├─ lưu ảnh X-ray
-      │         ├─ lưu thông tin bệnh nhân
-      │         └─ lưu kết quả chẩn đoán
-      │
-      ▼
-[ Response Formatter ]
-      │
-      ▼
-[ Web Frontend UI hiển thị kết quả ] 
+User
+  │
+  ▼
+Frontend (HTML, CSS, JavaScript)
+  │
+  ▼
+Backend API (Flask / FastAPI)
+  │
+  ▼
+Image Processing
+  │
+  ▼
+Deep Learning Model
+  │
+  ▼
+Grad-CAM Visualization
+  │
+  ▼
+Prediction Result
 ```
 ## 🖥️ Giao Diện Chính
 <img width="1874" height="875" alt="image" src="https://github.com/user-attachments/assets/6326d370-da21-4dac-ba01-8f8b81209a3f" />
@@ -389,6 +375,35 @@ Chức năng:
  * Hiển thị Grad-CAM heatmap
 # CHƯƠNG III: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
 ## 3.1 Kiến trúc tổng thể
+Hệ thống được triển khai theo mô hình Client–Server. Người dùng truy cập hệ thống thông qua trình duyệt web bằng địa chỉ localhost. Máy chủ web Nginx đóng vai trò là reverse proxy, tiếp nhận yêu cầu từ người dùng và chuyển tiếp đến backend API. Backend xử lý yêu cầu và gọi mô hình Deep Learning để thực hiện chẩn đoán ảnh X-ray.
+
+Kiến trúc tổng thể của hệ thống:
+```bash
+User
+  │
+  ▼
+Frontend (HTML, CSS, JavaScript)
+  │
+  ▼
+Backend API (Flask / FastAPI)
+  │
+  ▼
+Image Processing
+  │
+  ▼
+Deep Learning Model
+  │
+  ▼
+Grad-CAM Visualization
+  │
+  ▼
+Prediction Result
+```
+Các thành phần chính:
+Frontend: Giao diện website, cho phép người dùng upload ảnh X-ray, Hiển thị kết quả dự đoán và Grad-CAM.
+Backend: Nhận ảnh từ frontend, xử lý dữ liệu, gọi mô hình AI.
+AI Model: Phân loại ảnh X-ray, phát hiện viêm phổi.
+Grad-CAM Module: Tạo heatmap giải thích vùng tổn thương.
 ## 3.2 Use Case
 ## 3.3 Thiết kế dữ liệu
 ## 3.4 Thiết kế API
