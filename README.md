@@ -405,7 +405,73 @@ Backend: Nhận ảnh từ frontend, xử lý dữ liệu, gọi mô hình AI.
 AI Model: Phân loại ảnh X-ray, phát hiện viêm phổi.
 Grad-CAM Module: Tạo heatmap giải thích vùng tổn thương.
 ## 3.2 Use Case
-## 3.3 Thiết kế dữ liệu
-## 3.4 Thiết kế API
-## 3.5 Thiết kế giao diện
+Use Case Diagram mô tả cách người dùng tương tác với hệ thống.
+
+Actor
+ * Người dùng (User)
+Các Use Case chính:
+ * Upload ảnh X-ray
+ * Thực hiện chẩn đoán
+ * Xem kết quả dự đoán
+ * Xem Grad-CAM heatmap
+   
+![usecase_website_chan_doan_viem_phoi](https://github.com/user-attachments/assets/0f625dc7-7e9a-4976-af78-39db5de26fd4)
+
+Quy trình sử dụng hệ thống:
+ * Người dùng truy cập website.
+ * Người dùng tải ảnh X-ray lên hệ thống.
+ * Hệ thống thực hiện phân tích ảnh.
+ * Kết quả dự đoán và Grad-CAM được hiển thị.
+
+## 3.3 Thiết kế API
+Backend của hệ thống cung cấp các API để giao tiếp giữa frontend và mô hình AI.
+### 3.3.1 API Upload Image
+Endpoint
+``` bash
+POST /upload
+```
+
+Chức năng:
+ * Nhận ảnh từ người dùng
+ * Lưu ảnh vào server
+
+Request:
+```bash
+image file
+```
+Response:
+``` bash
+{
+  "status": "success",
+  "image_id": 101
+}
+```
+### 3.3.2 API Predict
+Endpoint
+``` bash
+POST /predict
+```
+
+Chức năng:
+ * Thực hiện dự đoán ảnh X-ray
+
+Request:
+```bash
+image file
+```
+Response:
+``` bash
+{
+ "prediction": "Pneumonia",
+ "confidence": 0.91
+}
+```
+## 3.4 Thiết kế giao diện
+Giao diện chính: 
+<img width="1920" height="963" alt="image" src="https://github.com/user-attachments/assets/11ca8eab-af01-48d5-80cc-19bbef30fdc4" />
+Giao diện sau khi upload ảnh
+<img width="1913" height="969" alt="image" src="https://github.com/user-attachments/assets/df5f2c00-e9ae-4e7f-9116-8eeb35a6c79f" />
+Giao diện kết quả chẩn đoán
+<img width="1913" height="969" alt="image" src="https://github.com/user-attachments/assets/54461182-841c-4df2-aefd-14a72851c682" />
+
 
