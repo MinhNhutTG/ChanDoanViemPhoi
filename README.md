@@ -375,37 +375,71 @@ Chức năng:
  * Hiển thị kết quả
  * Hiển thị Grad-CAM heatmap
 # CHƯƠNG III: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
-## 3.1 Kiến trúc tổng thể
+## 3.1 Phân tích yêu cầu hệ thống
+### 3.1.1 Mục tiêu hệ thống
+Hệ thống được xây dựng nhằm hỗ trợ người dùng (bác sĩ hoặc người sử dụng) phát hiện viêm phổi từ ảnh X-ray thông qua mô hình Deep Learning.
+
+Các mục tiêu chính của hệ thống bao gồm:
+ * Tự động phân loại ảnh X-ray thành các lớp: Normal, Pneumonia, Not Normal.
+ * Hiển thị Grad-CAM heatmap nhằm giải thích vùng ảnh mà mô hình sử dụng để đưa ra dự đoán.
+ * Cung cấp giao diện website trực quan để người dùng tải ảnh và xem kết quả chẩn đoán.
+### 3.1.2 Yêu cầu chức năng
+Các chức năng chính của hệ thống bao gồm:
+ * Tải ảnh X-ray: Người dùng có thể tải ảnh X-ray từ máy tính lên hệ thống thông qua giao diện website.
+ * Tiền xử lý ảnh: Sau khi ảnh được tải lên, hệ thống sẽ thực hiện các bước tiền xử lý như:
+   * Resize ảnh về kích thước phù hợp
+   * Chuẩn hóa dữ liệu ảnh
+   * Chuyển đổi ảnh sang định dạng phù hợp cho mô hình
+ * Dự đoán bệnh: Ảnh sau khi được xử lý sẽ được đưa vào mô hình Deep Learning để thực hiện phân loại.
+ * Hiển thị Grad-CAM: Hệ thống sử dụng Grad-CAM để tạo heatmap hiển thị vùng ảnh mà mô hình tập trung khi đưa ra dự đoán.
+ * Hiển thị kết quả
+   * Kết quả chẩn đoán bao gồm:
+   * Nhãn dự đoán
+   * Xác suất dự đoán
+   * Hình ảnh Grad-CAM
+
+### 3.1.2 Yêu cầu phi chức năng
+Ngoài các chức năng chính, hệ thống cần đáp ứng các yêu cầu sau:
+* Hiệu suất: Thời gian xử lý và dự đoán nhanh (vài giây).
+* Khả năng mở rộng: Có thể tích hợp thêm mô hình AI hoặc dataset mới.
+* Tính dễ sử dụng: Giao diện đơn giản, thân thiện với người dùng.
+* Độ chính xác: Mô hình Deep Learning phải đạt độ chính xác cao để đảm bảo hỗ trợ chẩn đoán hiệu quả.
+## 3.2 Kiến trúc tổng thể
 Hệ thống được triển khai theo mô hình Client–Server. Người dùng truy cập hệ thống thông qua trình duyệt web bằng địa chỉ localhost. Máy chủ web Nginx đóng vai trò là reverse proxy, tiếp nhận yêu cầu từ người dùng và chuyển tiếp đến backend API. Backend xử lý yêu cầu và gọi mô hình Deep Learning để thực hiện chẩn đoán ảnh X-ray.
 
 Kiến trúc tổng thể của hệ thống:
 ```bash
-User
-  │
-  ▼
+User (Browser)
+      │
+      ▼
+Nginx Web Server
+      │
+      ▼
 Frontend (HTML, CSS, JavaScript)
-  │
-  ▼
+      │
+      ▼
 Backend API (Flask / FastAPI)
-  │
-  ▼
-Image Processing
-  │
-  ▼
-Deep Learning Model
-  │
-  ▼
+      │
+      ▼
+Image Preprocessing
+      │
+      ▼
+Deep Learning Model (ResNet50)
+      │
+      ▼
 Grad-CAM Visualization
-  │
-  ▼
+      │
+      ▼
 Prediction Result
 ```
 Các thành phần chính:
+Nginx: đóng vai trò web server và reverse proxy, xử lý request từ trình duyệt.
 Frontend: Giao diện website, cho phép người dùng upload ảnh X-ray, Hiển thị kết quả dự đoán và Grad-CAM.
 Backend: Nhận ảnh từ frontend, xử lý dữ liệu, gọi mô hình AI.
 AI Model: Phân loại ảnh X-ray, phát hiện viêm phổi.
 Grad-CAM Module: Tạo heatmap giải thích vùng tổn thương.
-## 3.2 Use Case
+
+## 3.3 Use Case
 Use Case Diagram mô tả cách người dùng tương tác với hệ thống.
 
 Actor
@@ -423,10 +457,24 @@ Quy trình sử dụng hệ thống:
  * Người dùng tải ảnh X-ray lên hệ thống.
  * Hệ thống thực hiện phân tích ảnh.
  * Kết quả dự đoán và Grad-CAM được hiển thị.
-
-## 3.3 Thiết kế API
+## 3.3 Activity Diagram
+Activity Diagram mô tả luồng hoạt động của hệ thống khi thực hiện chẩn đoán.
+Sơ đồ Activity
+Quy trình hoạt động:
+1) Người dùng tải ảnh X-ray lên hệ thống.
+2) Hệ thống thực hiện tiền xử lý ảnh.
+3) Ảnh được đưa vào mô hình Deep Learning.
+4) Mô hình trả về kết quả dự đoán.
+5) Grad-CAM được tạo để hiển thị vùng ảnh quan trọng.
+6) Kết quả được hiển thị trên website.
+## 3.4 Sequence Diagram
+Sequence Diagram mô tả sự tương tác giữa các thành phần hệ thống theo thời gian.
+Sơ đồ: 
+## 3.5 Class Diagram
+Sơ đồ:
+## 3.6 Thiết kế API
 Backend của hệ thống cung cấp các API để giao tiếp giữa frontend và mô hình AI.
-### 3.3.1 API Upload Image
+### 3.6.1 API Upload Image
 Endpoint
 ``` bash
 POST /upload
@@ -447,7 +495,7 @@ Response:
   "image_id": 101
 }
 ```
-### 3.3.2 API Predict
+### 3.6.2 API Predict
 Endpoint
 ``` bash
 POST /predict
@@ -467,12 +515,19 @@ Response:
  "confidence": 0.91
 }
 ```
-## 3.4 Thiết kế giao diện
+## 3.7 Thiết kế giao diện
 Giao diện chính: 
 <img width="1920" height="963" alt="image" src="https://github.com/user-attachments/assets/11ca8eab-af01-48d5-80cc-19bbef30fdc4" />
 Giao diện sau khi upload ảnh
 <img width="1913" height="969" alt="image" src="https://github.com/user-attachments/assets/df5f2c00-e9ae-4e7f-9116-8eeb35a6c79f" />
 Giao diện kết quả chẩn đoán
 <img width="1913" height="969" alt="image" src="https://github.com/user-attachments/assets/54461182-841c-4df2-aefd-14a72851c682" />
+
+## 3.8 Thiết kế mô hình AI
+
+
+# CHƯƠNG IV: THỬ NGHIỆM VÀ ĐÁNH GIÁ
+# CHƯƠNG V: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+# TÀI LIỆU THAM KHẢO
 
 
