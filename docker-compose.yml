@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: pneumonia_backend
+    ports:
+      - "5000:5000"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    container_name: pneumonia_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
