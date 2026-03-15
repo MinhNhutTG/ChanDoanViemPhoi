@@ -17,24 +17,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 2. XỬ LÝ PREVIEW: Khi đã chọn ảnh xong
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                // Hiển thị ảnh vừa chọn
-                imagePreview.src = event.target.result;
-                imagePreview.classList.remove('hidden');
-                // Ẩn hướng dẫn upload
-                uploadPrompt.classList.add('hidden');
-                
-                // Reset vùng kết quả về trạng thái ban đầu
-                resultContent.classList.add('hidden');
-                noResult.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    fileInput.addEventListener('change', async (e) => {
+
+    const file = e.target.files[0];
+    if (!file) {
+        console.log("Không có file nào được chọn");
+        return;
+    };
+   
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        console.log("Đang gửi file:", file.name);
+        const response = await fetch("http://127.0.0.1:5000/api/preview", {
+            method: "POST",
+            body: formData
+        });
+       
+        const data = await response.json();
+        console.log("Dữ liệu nhận được từ server:", data);
+        imagePreview.src = "data:image/jpeg;base64," + data.image;
+        imagePreview.classList.remove("hidden");
+
+        uploadPrompt.classList.add("hidden");
+
+        resultContent.classList.add("hidden");
+        noResult.classList.remove("hidden");
+
+    } catch (error) {
+
+        console.error("Preview error:", error);
+
+    }
+
+});
 
     // 3. HÀM DỰ ĐOÁN (Chạy khi nhấn nút "Bắt đầu chẩn đoán")
     window.predict = async function() {
@@ -46,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Trạng thái chờ (Loading)
         const originalBtnHTML = analyzeBtn.innerHTML;
         analyzeBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Đang phân tích...';
+
         analyzeBtn.disabled = true;
 
         // Hiện khung kết quả trống
@@ -65,12 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) throw new Error("Lỗi Server");
 
-            const data = await response.json();
-
-            
-            const label = data["ket_qua"];
-
-            const percent = data["do_tin_cay"] ? (data["do_tin_cay"] * 100).toFixed(2) + "%" : "";
+            const data = await response.json();            
+            const label = data.prediction.prediction;
+            const percent = data.prediction.confidence ? (data.prediction.confidence * 100).toFixed(2) + "%" : "";
             
             predictionText.innerText = `${label} (${percent})`;
 
@@ -84,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Hiển thị ảnh GradCAM
-           if (data["image_url"]) {
-               gradcamImage.src = data["image_url"];
+           if (data.prediction.heatmap_url) {
+               gradcamImage.src = data.prediction.heatmap_url;
            }
 
         } catch (error) {
