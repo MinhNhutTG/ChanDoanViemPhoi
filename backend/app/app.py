@@ -80,4 +80,6 @@ def predict_api():
     return jsonify(response.to_dict())
 
 if __name__ == "__main__":
+    print("FLASK STARTED SUCCESSFULLY")
     app.run(host="0.0.0.0", port=5000)
+  
