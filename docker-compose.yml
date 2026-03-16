@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  chandoanviemphoi:
+    build: .
+    container_name: chandoanviemphoi_app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend/models:/app/backend/models
+    restart: unless-stopped

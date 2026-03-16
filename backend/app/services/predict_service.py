@@ -6,6 +6,8 @@ import numpy as np
 from torchvision import models, transforms
 from PIL import Image
 import pydicom
+import os
+
 
 # =========================================================
 # DEVICE
@@ -34,7 +36,9 @@ model.fc = nn.Sequential(
 # =========================================================
 # LOAD CHECKPOINT
 # =========================================================
-checkpoint = torch.load("models/best_resnet50_rsna.pth", map_location=device)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "../../models/best_resnet50_rsna.pth")
+checkpoint = torch.load(MODEL_PATH, map_location=device)
 model.load_state_dict(checkpoint["model_state_dict"])
 model = model.to(device)
 model.eval()
