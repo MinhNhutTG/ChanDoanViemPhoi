@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
         console.log("Đang gửi file:", file.name);
-        const response = await fetch("http://127.0.0.1:5000/api/preview", {
+        const response = await fetch("/api/preview", {
             method: "POST",
             body: formData
         });
