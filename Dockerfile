@@ -31,4 +31,4 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
-CMD ["sh", "-c", "python app/app.py & nginx -g 'daemon off;'"]
+CMD ["python", "-u", "app/app.py"]
