@@ -24,4 +24,4 @@ COPY backend/models ./models
 
 EXPOSE 5000
 
-CMD ["python", "app/main.py"]
+CMD ["python", "app/app.py"]
