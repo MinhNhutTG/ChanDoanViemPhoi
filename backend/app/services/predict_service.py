@@ -48,7 +48,7 @@ model.fc = nn.Sequential(
 # LOAD CHECKPOINT
 # =========================================================
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "../../models/best_resnet50_rsna.pth")
+MODEL_PATH = os.path.join(BASE_DIR, "../../models/best_resnet50.pth")
 
 checkpoint = torch.load(MODEL_PATH, map_location=device, weights_only=False)
 
