@@ -6,3 +6,4 @@ pillow
 dotenv
 opencv-python-headless
 pydicom
+gdown
