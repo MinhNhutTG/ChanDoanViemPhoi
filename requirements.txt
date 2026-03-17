@@ -7,3 +7,5 @@ dotenv
 opencv-python-headless
 pydicom
 gdown
+flask_cors
+groq

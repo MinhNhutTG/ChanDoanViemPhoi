@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gradcamImage = document.getElementById('gradcam-image');
     const predictionText = document.getElementById('prediction-text');
     const resultBadge = document.getElementById('result-badge');
-
+    const reportContent = document.getElementById('report-content');
     // 1. KÍCH HOẠT CHỌN FILE: Khi click vào vùng dropzone, mở bảng chọn ảnh
     dropzone.addEventListener('click', () => {
         fileInput.click();
@@ -19,42 +19,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. XỬ LÝ PREVIEW: Khi đã chọn ảnh xong
     fileInput.addEventListener('change', async (e) => {
 
-    const file = e.target.files[0];
-    if (!file) {
-        console.log("Không có file nào được chọn");
-        return;
-    };
-   
-    const formData = new FormData();
-    formData.append("file", file);
+        const file = e.target.files[0];
+        if (!file) {
+            console.log("Không có file nào được chọn");
+            return;
+        };
 
-    try {
-        console.log("Đang gửi file:", file.name);
-        const response = await fetch("/api/preview", {
-            method: "POST",
-            body: formData
-        });
-       
-        const data = await response.json();
-        console.log("Dữ liệu nhận được từ server:", data);
-        imagePreview.src = "data:image/jpeg;base64," + data.image;
-        imagePreview.classList.remove("hidden");
+        const formData = new FormData();
+        formData.append("file", file);
 
-        uploadPrompt.classList.add("hidden");
+        try {
+            console.log("Đang gửi file:", file.name);
+            const response = await fetch("/api/preview", {
+                method: "POST",
+                body: formData
+            });
 
-        resultContent.classList.add("hidden");
-        noResult.classList.remove("hidden");
+            const data = await response.json();
+            console.log("Dữ liệu nhận được từ server:", data);
+            imagePreview.src = "data:image/jpeg;base64," + data.image;
+            imagePreview.classList.remove("hidden");
 
-    } catch (error) {
+            uploadPrompt.classList.add("hidden");
 
-        console.error("Preview error:", error);
+            resultContent.classList.add("hidden");
+            noResult.classList.remove("hidden");
 
-    }
+        } catch (error) {
 
-});
+            console.error("Preview error:", error);
+
+        }
+
+    });
 
     // 3. HÀM DỰ ĐOÁN (Chạy khi nhấn nút "Bắt đầu chẩn đoán")
-    window.predict = async function() {
+    window.predict = async function () {
         if (!fileInput.files[0]) {
             alert("Vui lòng chọn một file ảnh X-ray trước!");
             return;
@@ -83,25 +83,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) throw new Error("Lỗi Server");
 
-            const data = await response.json();            
+            const data = await response.json();
             const label = data.prediction.prediction;
             const percent = data.prediction.confidence ? (data.prediction.confidence * 100).toFixed(2) + "%" : "";
-            
-            predictionText.innerText = `${label} (${percent})`;
+            const probabilities = data.prediction.probabilities;
 
+            const probText = probabilities
+                ? Object.entries(probabilities)
+                    .map(([cls, prob]) => `${cls}: ${(prob * 100).toFixed(2)}%`)
+                    .join(" | ")
+                : "Không có dữ liệu xác suất";
+
+
+            predictionText.innerText = `${label} (${percent}) \n Xác Suất: ${probText}`;
+            reportContent.innerText = data.prediction.report || "Không có báo cáo chi tiết.";
             // Đổi màu khung dựa trên kết quả
-            if (label.toUpperCase().includes("PNEUMONIA") || label.toUpperCase().includes("VIÊM PHỔI")) {
-                resultBadge.className = "p-4 rounded-lg border-l-4 bg-red-50 border-red-500 shadow-sm";
-                predictionText.className = "text-2xl font-black text-red-700";
+            if (label.toUpperCase().includes("LUNG_OPACITY") || label.toUpperCase().includes("VIÊM PHỔI")) {
+                resultBadge.className = "p-4 rounded-lg border-l-4 border-red-500 shadow-sm";
+                predictionText.className = "text-2xl font-black text-red-500";
             } else {
-                resultBadge.className = "p-4 rounded-lg border-l-4 bg-green-50 border-green-500 shadow-sm";
-                predictionText.className = "text-2xl font-black text-green-700";
+                resultBadge.className = "p-4 rounded-lg border-l-4  border-green-500 shadow-sm";
+                predictionText.className = "text-2xl font-black text-green-500";
             }
 
             // Hiển thị ảnh GradCAM
-           if (data.prediction.heatmap_url) {
-               gradcamImage.src = data.prediction.heatmap_url;
-           }
+            if (data.prediction.heatmap_url) {
+                gradcamImage.src = data.prediction.heatmap_url;
+            }
 
         } catch (error) {
             console.error(error);
