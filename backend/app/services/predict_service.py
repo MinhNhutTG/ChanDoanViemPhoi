@@ -1,4 +1,3 @@
-
 # services/predict_service.py
 import torch
 import torch.nn as nn
@@ -14,35 +13,37 @@ import os
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # =========================================================
-# MODEL ARCHITECTURE — khớp với checkpoint hiện có
-# Checkpoint keys: conv1/bn1/layer1-4 (backbone gốc) + fc.1/fc.2/fc.5/fc.6/fc.9
-#
-# fc layout được suy ra từ keys:
-#   fc.0  = Dropout(0.5)
-#   fc.1  = Linear(2048, 512)
-#   fc.2  = BatchNorm1d(512)
-#   fc.3  = ReLU
-#   fc.4  = Dropout(0.4)
-#   fc.5  = Linear(512, 128)
-#   fc.6  = BatchNorm1d(128)
-#   fc.7  = ReLU
-#   fc.8  = Dropout(0.3)
-#   fc.9  = Linear(128, 3)   <- 3 class goc
+# MODEL ARCHITECTURE — khớp đúng với notebook training
 # =========================================================
-model = models.resnet50(weights=None)
-num_ftrs = model.fc.in_features  # 2048
-model.fc = nn.Sequential(
-    nn.Dropout(0.5),            # fc.0
-    nn.Linear(num_ftrs, 512),   # fc.1
-    nn.BatchNorm1d(512),        # fc.2
-    nn.ReLU(),                  # fc.3
-    nn.Dropout(0.4),            # fc.4
-    nn.Linear(512, 128),        # fc.5
-    nn.BatchNorm1d(128),        # fc.6
-    nn.ReLU(),                  # fc.7
-    nn.Dropout(0.3),            # fc.8
-    nn.Linear(128, 3),          # fc.9 -> 3 class
-)
+class ResNet50Classifier(nn.Module):
+    def __init__(self, num_classes=2, dropout=0.5):
+        super().__init__()
+        backbone = models.resnet50(weights=None)
+
+        # Backbone: tất cả trừ avgpool & fc
+        self.features = nn.Sequential(*list(backbone.children())[:-2])
+
+        # GAP + GMP – concat -> 2048*2 = 4096
+        self.gap = nn.AdaptiveAvgPool2d(1)
+        self.gmp = nn.AdaptiveMaxPool2d(1)
+
+        self.head = nn.Sequential(
+            nn.Dropout(dropout),          # head.0
+            nn.Linear(4096, 512),         # head.1
+            nn.BatchNorm1d(512),          # head.2
+            nn.ReLU(inplace=True),        # head.3
+            nn.Dropout(dropout / 2),      # head.4
+            nn.Linear(512, num_classes),  # head.5
+        )
+
+    def forward(self, x):
+        feat = self.features(x)
+        gap  = self.gap(feat).flatten(1)
+        gmp  = self.gmp(feat).flatten(1)
+        return self.head(torch.cat([gap, gmp], dim=1))
+
+
+model = ResNet50Classifier(num_classes=2, dropout=0.5)
 
 # =========================================================
 # LOAD CHECKPOINT
@@ -53,10 +54,11 @@ MODEL_PATH = os.path.join(BASE_DIR, "../../models/best_resnet50.pth")
 checkpoint = torch.load(MODEL_PATH, map_location=device, weights_only=False)
 
 if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
-    model.load_state_dict(checkpoint["model_state_dict"])
+    state_dict = checkpoint["model_state_dict"]
 else:
-    model.load_state_dict(checkpoint)
+    state_dict = checkpoint
 
+model.load_state_dict(state_dict)
 model = model.to(device)
 model.eval()
 
@@ -72,7 +74,6 @@ infer_transform = transforms.Compose([
     transforms.Normalize(mean=MEAN, std=STD),
 ])
 
-# TTA - 4 transform, average xac suat
 tta_transforms = [
     transforms.Compose([
         transforms.Resize((224, 224)),
@@ -100,42 +101,12 @@ tta_transforms = [
 ]
 
 # =========================================================
-# CLASS NAMES (3 class goc cua checkpoint)
-# index: LUNG_OPACITY=0, NORMAL=1, NOT_NORMAL=2
+# CLASS NAMES — đúng thứ tự từ notebook: index 0=normal, 1=lung_opacity
 # =========================================================
-RAW_CLASSES = ["LUNG_OPACITY", "NORMAL", "NOT_NORMAL"]
-
-# =========================================================
-# Mapping ve 2 class chan doan:
-#   NORMAL          -> NORMAL        (chi khi raw predict = NORMAL)
-#   LUNG_OPACITY    -> LUNG_OPACITY  (gop LUNG_OPACITY + NOT_NORMAL)
-#   NOT_NORMAL      -> LUNG_OPACITY
-# =========================================================
-def map_to_2class(raw_probs: torch.Tensor):
-    """
-    raw_probs: tensor shape (1, 3) - [p_LUNG_OPACITY, p_NORMAL, p_NOT_NORMAL]
-    Returns: (label, confidence, prob_dict)
-    """
-    p_lung_opacity = raw_probs[0][0].item() + raw_probs[0][2].item()  # LUNG_OPACITY + NOT_NORMAL
-    p_normal       = raw_probs[0][1].item()
-
-    # Re-normalize
-    total          = p_normal + p_lung_opacity
-    p_normal       /= total
-    p_lung_opacity /= total
-
-    if p_lung_opacity >= p_normal:
-        label = "LUNG_OPACITY"
-        conf  = p_lung_opacity
-    else:
-        label = "NORMAL"
-        conf  = p_normal
-
-    return label, conf, {"NORMAL": p_normal, "LUNG_OPACITY": p_lung_opacity}
-
+CLASSES = ["normal", "lung_opacity"]
 
 # =========================================================
-# READ IMAGE  (DICOM + JPG/PNG)
+# READ IMAGE (DICOM + JPG/PNG)
 # =========================================================
 def read_image(file) -> Image.Image:
     if isinstance(file, str):
@@ -154,7 +125,6 @@ def read_image(file) -> Image.Image:
         file.seek(0)
         return Image.open(file).convert("RGB")
 
-
 # =========================================================
 # PREDICT
 # =========================================================
@@ -169,20 +139,30 @@ def predict_image(image_file, use_tta: bool = True) -> dict:
                 outputs = model(tensor)
                 probs = torch.softmax(outputs, dim=1)
                 all_probs.append(probs)
-            avg_probs = torch.stack(all_probs).mean(dim=0)  # (1, 3)
+            avg_probs = torch.stack(all_probs).mean(dim=0)  # (1, 2)
         else:
             tensor = infer_transform(image).unsqueeze(0).to(device)
             outputs = model(tensor)
-            avg_probs = torch.softmax(outputs, dim=1)       # (1, 3)
+            avg_probs = torch.softmax(outputs, dim=1)
 
-    label, conf, prob_2class = map_to_2class(avg_probs)
+    p_normal       = avg_probs[0][0].item()
+    p_lung_opacity = avg_probs[0][1].item()
+
+    if p_lung_opacity >= p_normal:
+        label = "LUNG_OPACITY"
+        conf  = p_lung_opacity
+    else:
+        label = "NORMAL"
+        conf  = p_normal
 
     return {
         "prediction_service": label,
         "confidence_service": round(conf, 4),
-        "probabilities": {k: round(v, 4) for k, v in prob_2class.items()},
+        "probabilities": {
+            "NORMAL":       round(p_normal, 4),
+            "LUNG_OPACITY": round(p_lung_opacity, 4),
+        },
     }
-
 
 # =========================================================
 # QUICK TEST
