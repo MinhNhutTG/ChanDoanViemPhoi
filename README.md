@@ -15,7 +15,7 @@
 
 ## 🚀 Demo
 
-[![Hugging Face Space](https://img.shields.io/badge/HuggingFace-Demo-yellow?logo=huggingface)]
+![Hugging Face Space](https://img.shields.io/badge/HuggingFace-Demo-yellow?logo=huggingface)
 (https://huggingface.co/spaces/MinhNhut3005/chandoanviemphoi)
 
 # 📖 Giới Thiệu Đồ Án
