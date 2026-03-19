@@ -103,7 +103,7 @@ tta_transforms = [
 # =========================================================
 # CLASS NAMES — đúng thứ tự từ notebook: index 0=normal, 1=lung_opacity
 # =========================================================
-CLASSES = ["normal", "lung_opacity"]
+CLASSES = ["Bình Thường", "Mờ Phổi"] 
 
 # =========================================================
 # READ IMAGE (DICOM + JPG/PNG)
@@ -149,18 +149,18 @@ def predict_image(image_file, use_tta: bool = True) -> dict:
     p_lung_opacity = avg_probs[0][1].item()
 
     if p_lung_opacity >= p_normal:
-        label = "LUNG_OPACITY"
+        label = "Mờ Phổi"
         conf  = p_lung_opacity
     else:
-        label = "NORMAL"
+        label = "Bình Thường"
         conf  = p_normal
 
     return {
         "prediction_service": label,
         "confidence_service": round(conf, 4),
         "probabilities": {
-            "NORMAL":       round(p_normal, 4),
-            "LUNG_OPACITY": round(p_lung_opacity, 4),
+            "Bình Thường":       round(p_normal, 4),
+            "Mờ Phổi": round(p_lung_opacity, 4),
         },
     }
 

@@ -301,6 +301,45 @@
         /* ── AUC bars ── */
         .auc-bar { transition: width 1s cubic-bezier(.22,1,.36,1); border-radius: 999px; }
 
+        /* ── LLM Report Panel ── */
+        .llm-report-panel {
+            background: linear-gradient(145deg, rgba(240,249,255,0.7), rgba(240,253,244,0.5));
+            border: 1.5px solid rgba(186,230,253,0.55);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .llm-report-header {
+            background: linear-gradient(135deg, rgba(224,242,254,0.8), rgba(220,252,231,0.6));
+            border-bottom: 1.5px solid rgba(186,230,253,0.4);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .llm-report-body {
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-mid);
+            max-height: 220px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--sky-200) transparent;
+        }
+        .llm-report-body::-webkit-scrollbar { width: 3px; }
+        .llm-report-body::-webkit-scrollbar-thumb { background: var(--sky-300); border-radius: 4px; }
+
+        /* Typing cursor animation */
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        .typing-cursor::after {
+            content: '|';
+            display: inline-block;
+            margin-left: 2px;
+            color: var(--sky-400);
+            animation: blink 0.9s step-end infinite;
+        }
+        .typing-cursor.done::after { display: none; }
+
         /* ── Report scroll ── */
         #report-content {
             max-height: 240px;
@@ -587,14 +626,7 @@
                                 <p class="text-xs" style="color: var(--text-soft);">Có vùng cản quang nghi viêm phổi</p>
                             </div>
                         </div>
-                        <div class="class-item flex items-center gap-3 p-3"
-                             style="background: linear-gradient(135deg, var(--peach-50), var(--peach-100)); border: 1.5px solid rgba(251,146,60,0.25); border-radius: 12px;">
-                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: var(--peach-400); box-shadow: 0 0 8px rgba(251,146,60,0.5);"></span>
-                            <div>
-                                <p class="text-xs font-700" style="color: var(--peach-500); font-weight: 700;">Not Normal — Bất thường</p>
-                                <p class="text-xs" style="color: var(--text-soft);">Bất thường không phải viêm phổi điển hình</p>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
 
@@ -669,19 +701,21 @@
                             </div>
 
                             <!-- Summary -->
-                            <div class="flex flex-col justify-between">
+                            <div class="flex flex-col gap-3">
+
+                                <!-- Probability bars -->
                                 <div>
                                     <div class="flex items-center gap-2 mb-3">
                                         <span class="w-2.5 h-2.5 rounded-full" style="background: var(--sky-400);"></span>
-                                        <p class="section-label">Tóm tắt kết quả</p>
+                                        <p class="section-label">Xác suất dự đoán</p>
                                     </div>
-                                    <div id="prob-bars" class="space-y-3">
-                                        <div class="text-sm italic" id="report-content"
-                                             style="color: var(--text-soft);">Chờ kết quả...</div>
+                                    <div id="prob-bars" class="space-y-2">
+                                        <div class="text-sm italic" style="color: var(--text-soft);">Chờ kết quả...</div>
                                     </div>
                                 </div>
 
-                                <div class="disclaimer mt-4 p-3.5">
+                                <!-- Disclaimer -->
+                                <div class="disclaimer p-3">
                                     <p class="text-xs leading-relaxed" style="color: var(--peach-500); font-weight: 600;">
                                         <i class="fas fa-triangle-exclamation mr-1"></i>
                                         <strong>Lưu ý:</strong> Kết quả chỉ mang tính hỗ trợ. Cần xác nhận từ bác sĩ chuyên khoa.
@@ -690,6 +724,35 @@
                             </div>
                         </div>
                     </div>
+
+                        <!-- ── LLM Diagnostic Report ── -->
+                        <div class="divider mt-1"></div>
+                        <div id="llm-report-section" class="mt-4">
+                            <div class="llm-report-panel">
+                                <div class="llm-report-header">
+                                    <div class="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                                         style="background: linear-gradient(135deg, var(--sky-400), var(--mint-400));">
+                                        <i class="fas fa-robot text-white" style="font-size:10px;"></i>
+                                    </div>
+                                    <p class="section-label" style="color: var(--sky-500);">Báo cáo chẩn đoán AI</p>
+                                    <span id="llm-report-badge" class="ml-auto text-xs font-semibold px-2 py-0.5 rounded-full hidden"
+                                          style="background: var(--mint-100); color: var(--mint-600); border: 1px solid rgba(74,222,128,0.3);">
+                                        <i class="fas fa-check-circle mr-1"></i>Hoàn tất
+                                    </span>
+                                    <span id="llm-loading-badge" class="ml-auto text-xs font-semibold px-2 py-0.5 rounded-full"
+                                          style="background: var(--sky-100); color: var(--sky-500); border: 1px solid rgba(56,189,248,0.3);">
+                                        <i class="fas fa-circle-notch fa-spin mr-1"></i>Đang tạo...
+                                    </span>
+                                </div>
+                                <div class="llm-report-body">
+                                    <p id="report-content" class="typing-cursor"
+                                       style="color: var(--text-soft); font-style: italic;">
+                                        Đang phân tích và tạo báo cáo...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                 </div>
             </div>
 
@@ -1044,6 +1107,37 @@
         document.getElementById('model-icon-wrap').addEventListener('mouseenter', () => {
             initChart(); initBars();
         });
+
+        /* ─────────────────────────────────────────────────
+           applyDiagnosisStyle(label)
+           Gọi từ script.js sau khi nhận kết quả predict.
+           label: chuỗi trả về từ model, ví dụ "lung_opacity" / "normal" / "not_normal"
+        ───────────────────────────────────────────────── */
+        function applyDiagnosisStyle(label) {
+            const resultBadge    = document.getElementById('result-badge');
+            const predictionText = document.getElementById('prediction-text');
+            const lbl = (label || '').toUpperCase();
+
+            // Reset animation mỗi lần đổi kết quả
+            resultBadge.style.animation = 'none';
+            requestAnimationFrame(() => {
+                resultBadge.style.animation = 'fadeSlideUp 0.45s cubic-bezier(.22,1,.36,1) both';
+            });
+
+            if (lbl.includes('MỜ PHỔI') ) {
+                // 🔴 Mờ phổi — rose/đỏ pastel
+                resultBadge.className = 'badge-opacity p-4';
+                predictionText.style.cssText = 'font-size:2.2rem; color:#e11d48; letter-spacing:-0.01em;';
+
+            } else {
+                // 🟢 Bình thường — mint/xanh lá pastel
+                resultBadge.className = 'badge-normal p-4';
+                predictionText.style.cssText = 'font-size:2.2rem; color:#15803d; letter-spacing:-0.01em;';
+            }
+
+            // Giữ class font
+            predictionText.classList.add('display', 'font-normal', 'uppercase');
+        }
     </script>
 </body>
 </html>
