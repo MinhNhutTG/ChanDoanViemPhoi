@@ -13,6 +13,11 @@
 ![Groq](https://img.shields.io/badge/Groq-FF4F00?style=for-the-badge&logo=groq&logoColor=white)
 
 
+## 🚀 Demo
+
+[![Hugging Face Space](https://img.shields.io/badge/HuggingFace-Demo-yellow?logo=huggingface)]
+(https://huggingface.co/spaces/MinhNhut3005/chandoanviemphoi)
+
 # 📖 Giới Thiệu Đồ Án
 
 
