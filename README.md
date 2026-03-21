@@ -75,9 +75,7 @@ Grad-CAM Visualization
 Prediction Result
 ```
 ## 🖥️ Giao Diện Chính
-<img width="1827" height="923" alt="image" src="https://github.com/user-attachments/assets/1af55e44-ae3d-4e66-b078-555c8f6846fb" />
-
-
+<img width="1893" height="822" alt="image" src="https://github.com/user-attachments/assets/9f6840ad-2d2f-454a-8e04-c41c068ba6eb" />
 
 
 ### 🛠️ Các Bước Cài Đặt Chi Tiết
