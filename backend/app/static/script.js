@@ -12,258 +12,180 @@ document.addEventListener('DOMContentLoaded', () => {
     const probBars       = document.getElementById('prob-bars');
     const reportContent  = document.getElementById('report-content');
 
-    // ── 1. MỞ CHỌN FILE ──────────────────────────────────────────────
     dropzone.addEventListener('click', () => fileInput.click());
 
-    // ── 2. PREVIEW ẢNH ───────────────────────────────────────────────
     fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         const formData = new FormData();
         formData.append('file', file);
-
         try {
-            const response = await fetch('/api/preview', { method: 'POST', body: formData });
-            const data = await response.json();
-
+            const res  = await fetch('/api/preview', { method: 'POST', body: formData });
+            const data = await res.json();
             imagePreview.src = 'data:image/jpeg;base64,' + data.image;
             imagePreview.classList.remove('hidden');
             uploadPrompt.classList.add('hidden');
-
-            // Reset về trạng thái chờ
             resultContent.classList.add('hidden');
             noResult.classList.remove('hidden');
-        } catch (err) {
-            console.error('Preview error:', err);
-        }
+        } catch (err) { console.error(err); }
     });
 
-    // ── 3. DỰ ĐOÁN ───────────────────────────────────────────────────
     window.predict = async function () {
-        if (!fileInput.files[0]) {
-            alert('Vui lòng chọn một file ảnh X-ray trước!');
-            return;
-        }
+        if (!fileInput.files[0]) { alert('Vui lòng chọn file ảnh X-ray!'); return; }
 
-        // Trạng thái loading
-        const originalBtnHTML = analyzeBtn.innerHTML;
-        analyzeBtn.innerHTML  = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang phân tích...';
-        analyzeBtn.disabled   = true;
+        const orig = analyzeBtn.innerHTML;
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang phân tích...';
+        analyzeBtn.disabled  = true;
 
         noResult.classList.add('hidden');
         resultContent.classList.remove('hidden');
         predictionText.innerText = 'Đang xử lý...';
-        _resetBadgeStyle();
+        _resetBadge();
 
-        const formData = new FormData();
-        formData.append('image', fileInput.files[0]);
+        const fd = new FormData();
+        fd.append('image', fileInput.files[0]);
 
         try {
-            const response = await fetch('/api/predict', { method: 'POST', body: formData });
-            if (!response.ok) throw new Error('Lỗi Server ' + response.status);
+            const res = await fetch('/api/predict', { method: 'POST', body: fd });
+            if (!res.ok) throw new Error('Server error ' + res.status);
+            const data       = await res.json();
+            const label      = data.prediction.prediction;
+            const confidence = data.prediction.confidence;
+            const probs      = data.prediction.probabilities || {};
+            const report     = data.prediction.report || '';
 
-            const data        = await response.json();
-            const label       = data.prediction.prediction;
-            const confidence  = data.prediction.confidence;
-            const probs       = data.prediction.probabilities || {};
-            const report      = data.prediction.report || '';
+            predictionText.innerText = _fmt(label);
+            _badge(label);
+            _bars(probs, confidence, label);
+            _report(report);
 
-            // ── Tiêu đề kết quả ──
-            predictionText.innerText = _formatLabel(label);
-
-            // ── Style badge theo loại kết quả ──
-            _applyBadgeStyle(label);
-
-            // ── Probability bars ──
-            _renderProbBars(probs, confidence, label);
-
-            // ── Báo cáo chi tiết ──
-            _renderReport(report);
-
-            // ── GradCAM ──
             if (data.prediction.heatmap_url) {
                 gradcamImage.src = data.prediction.heatmap_url;
                 gradcamImage.style.animation = 'none';
                 requestAnimationFrame(() => {
-                    gradcamImage.style.animation = 'fadeSlideUp 0.5s cubic-bezier(.22,1,.36,1) both';
+                    gradcamImage.style.animation = 'fadeUp .5s ease both';
                 });
             }
-
         } catch (err) {
             console.error(err);
             predictionText.innerText = 'Lỗi kết nối';
-            _applyErrorStyle();
+            _badgeError();
         } finally {
-            analyzeBtn.innerHTML = originalBtnHTML;
+            analyzeBtn.innerHTML = orig;
             analyzeBtn.disabled  = false;
         }
     };
 
-    // ════════════════════════════════════════════════════
-    //  HELPER FUNCTIONS
-    // ════════════════════════════════════════════════════
-
-    /** Chuyển nhãn model → tên hiển thị tiếng Việt */
-    function _formatLabel(label) {
-        const lbl = (label || '').toUpperCase();
-        if (lbl.includes('MỜ PHỔI'))  return 'Mờ phổi (Lung Opacity)';
-        if (lbl.includes('BÌNH THƯỜNG'))        return 'Bình thường (Normal)';
+    function _fmt(label) {
+        const l = (label || '').toUpperCase();
+        if (l.includes('MỜ PHỔI'))    return 'Mờ phổi (Lung Opacity)';
+        if (l.includes('BÌNH THƯỜNG')) return 'Bình thường (Normal)';
         return label;
     }
 
-    /** Reset badge về trạng thái trung tính khi đang chờ */
-    function _resetBadgeStyle() {
-        resultBadge.className = 'p-4 rounded-2xl';
-        resultBadge.style.animation = '';
-        predictionText.className    = 'display font-normal uppercase';
-        predictionText.style.cssText = 'font-size:2.2rem; color:var(--text-dark); letter-spacing:-0.01em;';
+    function _resetBadge() {
+        resultBadge.className = 'p-4';
+        resultBadge.style.cssText = '';
+        predictionText.style.cssText = 'font-size:2rem; color:var(--text-1);';
     }
 
-    /** Áp dụng style badge + màu chữ theo kết quả */
-    function _applyBadgeStyle(label) {
-        const lbl = (label || '').toUpperCase();
-
-        // Animation mỗi lần đổi kết quả
+    function _badge(label) {
+        const l = (label || '').toUpperCase();
         resultBadge.style.animation = 'none';
         requestAnimationFrame(() => {
-            resultBadge.style.animation = 'fadeSlideUp 0.45s cubic-bezier(.22,1,.36,1) both';
+            resultBadge.style.animation = 'fadeUp .4s ease both';
         });
-
-        predictionText.className = 'display font-normal uppercase';
-
-        if (lbl.includes('MỜ PHỔI') || lbl.includes('VIÊM PHỔI')) {
-            // 🔴 Mờ phổi
+        if (l.includes('MỜ PHỔI') || l.includes('VIÊM PHỔI')) {
             resultBadge.className        = 'badge-opacity p-4';
-            predictionText.style.cssText = 'font-size:2.2rem; color:#e11d48; letter-spacing:-0.01em;';
-
+            predictionText.style.cssText = 'font-size:2rem; color:var(--red-600);';
         } else {
-            // 🟢 Bình thường
             resultBadge.className        = 'badge-normal p-4';
-            predictionText.style.cssText = 'font-size:2.2rem; color:#15803d; letter-spacing:-0.01em;';
+            predictionText.style.cssText = 'font-size:2rem; color:var(--green-600);';
         }
+        predictionText.classList.add('serif');
     }
 
-    /** Style khi xảy ra lỗi kết nối */
-    function _applyErrorStyle() {
+    function _badgeError() {
         resultBadge.className        = 'badge-notnormal p-4';
-        predictionText.className     = 'display font-normal uppercase';
-        predictionText.style.cssText = 'font-size:2rem; color:#ea580c; letter-spacing:-0.01em;';
+        predictionText.style.cssText = 'font-size:1.8rem; color:var(--amber-500);';
+        predictionText.classList.add('serif');
     }
 
-    /** Render probability bars cho từng class */
-    function _renderProbBars(probs, confidence, predLabel) {
+    function _bars(probs, confidence, predLabel) {
         if (!probs || Object.keys(probs).length === 0) {
-            probBars.innerHTML = `
-                <div style="color:var(--text-soft); font-size:13px; font-style:italic;">
-                    Không có dữ liệu xác suất.
-                </div>`;
+            probBars.innerHTML = '<div style="color:var(--text-4);font-size:12px;font-style:italic;">Không có dữ liệu xác suất.</div>';
             return;
         }
-
-        // Màu sắc theo class
-        const config = {
-            'lung_opacity': { color: '#e11d48', bg: 'rgba(225,29,72,0.08)',  label: 'Mờ phổi'    },
-            'normal':       { color: '#15803d', bg: 'rgba(21,128,61,0.08)',  label: 'Bình thường' },
+        const cfg = {
+            'lung_opacity': { color: '#ef4444', track: '#fee2e2', label: 'Mờ phổi' },
+            'normal':       { color: '#22c55e', track: '#dcfce7', label: 'Bình thường' },
         };
-
-        // Sắp xếp giảm dần theo xác suất
         const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]);
-
         probBars.innerHTML = sorted.map(([cls, prob]) => {
             const pct  = (prob * 100).toFixed(1);
-            const cfg  = config[cls.toLowerCase()] || { color: 'var(--sky-400)', bg: 'rgba(56,189,248,0.08)', label: cls };
-            const isTop = cls.toLowerCase() === (predLabel || '').toLowerCase();
-
+            const c    = cfg[cls.toLowerCase()] || { color: '#3b82f6', track: '#dbeafe', label: cls };
+            const top  = cls.toLowerCase() === (predLabel || '').toLowerCase();
             return `
-            <div style="margin-bottom: 10px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span style="font-size:12px; font-weight:${isTop ? '700' : '500'}; color:${isTop ? cfg.color : 'var(--text-mid)'};">
-                        ${isTop ? '▶ ' : ''}${cfg.label}
+            <div style="margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                    <span style="font-size:12px;font-weight:${top?'700':'500'};color:${top?c.color:'var(--text-3)'};">
+                        ${top ? '▶ ' : ''}${c.label}
                     </span>
-                    <span style="font-family:'Fira Code',monospace; font-size:12px; font-weight:600; color:${cfg.color};">
-                        ${pct}%
-                    </span>
+                    <span style="font-family:'Fira Code',monospace;font-size:11px;font-weight:600;color:${c.color};">${pct}%</span>
                 </div>
-                <div style="width:100%; height:8px; border-radius:999px; background:${cfg.bg}; overflow:hidden;">
-                    <div style="
-                        height:8px; border-radius:999px;
-                        background:${cfg.color};
-                        width:0%;
-                        transition: width 0.85s cubic-bezier(.22,1,.36,1);
-                        opacity:${isTop ? '1' : '0.55'};
-                    " data-w="${pct}%"></div>
+                <div style="width:100%;height:6px;border-radius:999px;background:${c.track};overflow:hidden;">
+                    <div style="height:6px;border-radius:999px;background:${c.color};width:0%;transition:width .9s cubic-bezier(.22,1,.36,1);opacity:${top?'1':'0.5'};" data-w="${pct}%"></div>
                 </div>
             </div>`;
         }).join('');
-
-        // Animate bars sau khi render
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                probBars.querySelectorAll('[data-w]').forEach(bar => {
-                    bar.style.width = bar.dataset.w;
-                });
-            });
-        });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            probBars.querySelectorAll('[data-w]').forEach(b => { b.style.width = b.dataset.w; });
+        }));
     }
 
-    /** Render báo cáo LLM với hiệu ứng typewriter */
-    function _renderReport(report) {
-        const badge        = document.getElementById('llm-report-badge');
-        const loadingBadge = document.getElementById('llm-loading-badge');
-
-        // Reset trạng thái
+    function _report(report) {
+        const badge   = document.getElementById('llm-report-badge');
+        const loading = document.getElementById('llm-loading-badge');
         reportContent.classList.remove('done');
         reportContent.classList.add('typing-cursor');
-        if (badge)        badge.classList.add('hidden');
-        if (loadingBadge) loadingBadge.classList.remove('hidden');
+        badge?.classList.add('hidden');
+        loading?.classList.remove('hidden');
 
-        if (!report || report.trim() === '') {
-            reportContent.style.cssText = 'color:var(--text-soft); font-size:13px; font-style:italic;';
-            reportContent.innerText = 'Không có báo cáo chi tiết từ hệ thống.';
+        if (!report || !report.trim()) {
+            reportContent.style.cssText = 'color:var(--text-4);font-size:13px;font-style:italic;';
+            reportContent.innerText = 'Không có báo cáo chi tiết.';
             reportContent.classList.remove('typing-cursor');
             reportContent.classList.add('done');
-            if (badge)        badge.classList.remove('hidden');
-            if (loadingBadge) loadingBadge.classList.add('hidden');
+            badge?.classList.remove('hidden');
+            loading?.classList.add('hidden');
             return;
         }
 
-        // Typewriter effect
-        reportContent.style.cssText = 'color:var(--text-mid); font-size:13px; line-height:1.8;';
+        reportContent.style.cssText = 'color:var(--text-2);font-size:13px;line-height:1.75;';
         reportContent.innerText = '';
+        const lines = report.split('\n');
+        let li = 0, ci = 0;
 
-        const lines   = report.split('\n');
-        let lineIdx   = 0;
-        let charIdx   = 0;
-        const speed   = 14; // ms mỗi ký tự
-
-        function typeNext() {
-            if (lineIdx >= lines.length) {
-                // Hoàn tất
+        function type() {
+            if (li >= lines.length) {
                 reportContent.classList.remove('typing-cursor');
                 reportContent.classList.add('done');
-                if (badge)        badge.classList.remove('hidden');
-                if (loadingBadge) loadingBadge.classList.add('hidden');
+                badge?.classList.remove('hidden');
+                loading?.classList.add('hidden');
                 return;
             }
-            const line = lines[lineIdx];
-            if (charIdx < line.length) {
-                reportContent.innerText += line[charIdx];
-                charIdx++;
-                setTimeout(typeNext, speed);
+            const line = lines[li];
+            if (ci < line.length) {
+                reportContent.innerText += line[ci++];
+                setTimeout(type, 13);
             } else {
-                // Xuống dòng
-                if (lineIdx < lines.length - 1) reportContent.innerText += '\n';
-                lineIdx++;
-                charIdx = 0;
-                setTimeout(typeNext, speed * 3); // nhịp nghỉ giữa dòng
+                if (li < lines.length - 1) reportContent.innerText += '\n';
+                li++; ci = 0;
+                setTimeout(type, 40);
             }
-            // Auto-scroll xuống
-            const body = reportContent.closest('.llm-report-body');
+            const body = reportContent.closest('.report-body');
             if (body) body.scrollTop = body.scrollHeight;
         }
-
-        // Delay nhỏ trước khi bắt đầu gõ
-        setTimeout(typeNext, 300);
+        setTimeout(type, 300);
     }
 });

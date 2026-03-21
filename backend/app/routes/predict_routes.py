@@ -36,7 +36,7 @@ def predict_api():
     pred_class, heatmap_base64 , affected_region = run_gradcam(
         file_for_gradcam,
         checkpoint_path=MODEL_PATH,
-        device="cpu"
+        device="cpu",
     )
     report = generate_medical_json_report(result["prediction_service"], result["confidence_service"] , affected_region)
     
