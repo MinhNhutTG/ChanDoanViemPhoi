@@ -16,7 +16,10 @@
 ## 🚀 Demo
 
 ![Hugging Face Space](https://img.shields.io/badge/HuggingFace-Demo-yellow?logo=huggingface)
-(https://huggingface.co/spaces/MinhNhut3005/ChanDoanViemPhoi_dnc)
+
+Link demo: https://huggingface.co/spaces/MinhNhut3005/chandoanviemphoi
+
+Link demo backup: https://huggingface.co/spaces/MinhNhut3005/ChanDoanViemPhoi_dnc
 
 # 📖 Giới Thiệu Đồ Án
 
